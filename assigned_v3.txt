@@ -1,0 +1,97 @@
+Title: Oregon Indigency Calculator
+Author: Sonya
+Before: <link rel="stylesheet" type="text/css" href="https://suffolklitlab.org/howto/qna/style/style.css">
+<div id="icon" style="background-size: 110px 99px;background-image: url('https://suffolklitlab.org/howto/qna/images/maxheadroom.gif');"></div>
+<h2 style="text-align:center;">Oregon Indigency Calculator</h2>
+<input type="hidden" name="name" value="Qualify Letter"/>
+<input type="hidden" name="docx_uri" value="http://sonyacoding.github.io/ctl/Qualify%20Letter.docx"/>
+<p><b>This is a <a href="http://www.codingthelaw.org/">class project</a>. You should not rely on it as a source of legal information. It is likely incomplete.</b></p>
+<p>Answer the following questions to see if you qualify for an appointment of counsel or fee waiver.</p>
+After: 
+<script>
+function fedpov(house,income,percentage){
+	// Determine if your income is less than or equal to 
+	// a percentage of the 2019 federal poverty guidelines 
+	// for the contiguous United States. See
+	// https://www.federalregister.gov/documents/2019/02/01/2019-00621/annual-update-of-the-hhs-poverty-guidelines
+	
+		var line = NaN;
+	
+		if (house == 1) {
+			line = 12490;
+		} else if (house == 2) {
+			line = 16910;
+		} else if (house == 3) {
+			line = 21330;
+		} else if (house == 4) {
+			line = 25750;
+		} else if (house == 5) {
+			line = 30170;
+		} else if (house == 6) {
+			line = 34590;
+		} else if (house == 7) {
+			line = 39010;
+		} else if (house == 8) {
+			line = 43340;
+		} else if (house > 8) {
+			line = 43340 + (house-8)*4420;
+		}
+	
+		if (income <= (line*(percentage/100))) {
+			return true;
+		} else {
+			return false;
+		}
+	}	
+</script>	
+Q(name): What is your name?
+X:
+	Q(1.1):GOTO:2
+Q(2): Do your receive public assistance? 
+A: Yes
+	Q(2.1):GOTO:house
+A: No
+	Q(house): How many people are in your household?
+	X:number
+		Q(income): How much income does your household bring in per year in after tax dollars?
+		X:number
+			Q(criminal_or_civil): Are you facing a civil or criminal matter?
+			A[javascript:if (fedpov(getvar('house'),getvar('income'),130)){ goto('qualciv') } else { goto('noqualciv') } ]: Civil
+			A[javascript:if (fedpov(getvar('house'),getvar('income'),130)){ goto('qualcrim') } else if (fedpov(getvar('house'),getvar('income'),131)) { goto('noqualbut') } else { goto('noqualcrim') } ]: Criminal
+
+
+Q(qualciv): You probably qualify as indigent since you earn less than 130% of the poverty line. See <a href="https://www.oregonlaws.org/ors/21.682" target=_new>ORS 21.682</a>. Consequently, you may be eligible to have your court fees waived.  
+A(qualciv):[javascript:('Indigency Calculations.csv',csv())] You can find the fee waiver <a href="https://www.courts.oregon.gov/forms/Documents/EntirePacket10.pdf">here</a>.
+	Q(3.1):GOTO:civgen
+Q(civgen): Should I generate your letter?
+A(civgen): Yes
+	Q(civgen1):GOTO:generate1
+Q(generate1):Alright, are you ready to see your letter?
+A[javascript:submit2('http://colarusso.pythonanywhere.com/2docx/', 'POST', '', '', '', 'json_doc', '_blank')]: Yes (docx).
+	Q(5.1):GOTO:nomore 
+
+Q(qualcrim): You probably qualify as indigent since you earn less than 130% of the poverty line. So you'll likely be assigned a lawyer by the judge. See <a href="https://www.oregonlaws.org/ors/151.485" target=_new>ORS 151.485</a>.
+A(qualcrim):[javascript:('Indigency Calculations.csv',csv())]
+	Q(6.1):GOTO:crimgen
+Q(crimgen): Should I generate your letter?
+A(crimgen): Yes
+	Q(crimgen1):GOTO:generate2
+Q(generate2):Alright, are you ready to see your letter?
+A[javascript:submit2('http://colarusso.pythonanywhere.com/2docx/', 'POST', '', '', '', 'json_doc', '_blank')]: Yes (docx).
+	Q(8.1):GOTO:nomore 
+
+Q(qualbut): You probably qualify as indigent but able to contribute since you earn above 130% of the poverty line. So you'll likely be assigned a lawyer and asked to pay a small fee. See <a href="https://www.oregonlaws.org/ors/151.487" target=_new>ORS 151.487</a> and <a href="https://www.oregonlaws.org/ors/135.050" target=_new>ORS 135.050</a>.
+
+Q(noqualciv): You probably won't qualify as indigent since you earn more than 130% of the poverty line. See <a href="https://www.oregonlaws.org/ors/21.682" target=_new>ORS 21.682</a>. So you'll probably need to hire an attorney. Would you like to search for one near you?
+A:[https://www.avvo.com/find-a-lawyer] Yes.
+	Q(10.1):GOTO:nomore
+A: No
+	Q(10.2):GOTO:nomore
+
+Q(noqualcrim): You probably won't qualify as indigent or indigent but able to contribute since you earn more than 130% of the poverty line. So you'll probably need to hire an attorney. Would you like to search for one near you?
+A:[https://www.avvo.com/find-a-lawyer] Yes.
+	Q(11.1):GOTO:nomore
+A: No
+	Q(11.2):GOTO:nomore
+
+Q(nomore): I'm afraid there's nothing else I can help you with. I hope you have a nice day.
