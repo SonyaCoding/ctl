@@ -1,0 +1,6 @@
+Unnamed: 0,person_id,name,sex,date of birth,call_id,person_ID,Referal Soure,attorney,body_part_1,body_part_2,body_part_3,body_part_4,body_part_5,surgery,injury_date,intake,take
+0,100,Penelope Lewis,female,8/31/1990,136,100,Facebook,Patty Hewes,Head,NaN,NaN,NaN,NaN,yes,11/27/2015,2/6/2017,no
+1,101,David Anthony,male,10/14/1971,137,101,referal,Patty Hewes,hands,elbow,NaN,NaN,NaN,yes,6/30/2014,2/7/2017,no
+4,104,Lisandra Ortiz,female,8/5/2020,140,104,website,Rusty Sabich,neck,NaN,NaN,NaN,NaN,yes,12/28/2016,2/9/2017,no
+9,109,Everett Vadala,male,5/24/2005,145,109,referal,Perry Mason,hand,elbow,NaN,NaN,NaN,yes,7/29/2013,2/12/2017,no
+11,111,Annabelle Rosseau,female,7/13/1989,147,111,Google,Daniel Kafee,ankle,eye,arm,NaN,NaN,yes,7/5/2015,2/12/2017,yes
